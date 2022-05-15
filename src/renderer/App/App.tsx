@@ -1,65 +1,42 @@
-import * as React from 'react';
-import * as reactLogo from './images/react-icon.svg';
-import * as tsLogo from './images/typescript-icon.svg';
-import * as electronLogo from './images/electron-icon.svg';
-import './App.css';
+import * as React from "react";
+import Router from "./router/Router";
+import "../index.css";
+import { Loader } from "./components";
+import { useAppDispatch, useAppSelector } from "./app/hook";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ClearResponse } from "./features/slice/ResponseSlice";
+export default function App() {
+  const { loading } = useAppSelector((state) => state.ResponseReducer);
+  const { error, message } = useAppSelector((state) => state.ResponseReducer);
+  const dispatch = useAppDispatch();
 
-export const App = (): JSX.Element => {
+  function HandleNotifier() {
+    Boolean(message) &&
+      toast.success(message, {
+        position: toast.POSITION.TOP_RIGHT,
+        theme: "dark",
+        onClose: () => {
+          dispatch(ClearResponse());
+        },
+      });
+
+    Boolean(error) &&
+      toast.error(error, {
+        position: toast.POSITION.TOP_RIGHT,
+        theme: "dark",
+        onClose: () => {
+          dispatch(ClearResponse());
+        },
+      });
+  }
   return (
-    <div className='App'>
-      <div className='container'>
-        <img
-          src={reactLogo.default}
-          className='App-logo'
-          alt='react-logo'
-          id='react-logo'
-        />
-        <a
-          className='App-link'
-          href='https://reactjs.org'
-          target='_blank'
-          rel='noopener noreferrer'
-          id='react-link'
-        >
-          Learn React
-        </a>
-      </div>
-      <div className='container'>
-        <img
-          src={tsLogo.default}
-          className='App-logo'
-          alt='typescript-logo'
-          id='typescript-logo'
-        />
-        <a
-          className='App-link'
-          href='https://www.typescriptlang.org/'
-          target='_blank'
-          rel='noopener noreferrer'
-          id='typescript-link'
-        >
-          Learn TypeScript
-        </a>
-      </div>
-      <div className='container'>
-        <img
-          src={electronLogo.default}
-          className='App-logo'
-          alt='electron-logo'
-          id='electron-logo'
-        />
-        <a
-          className='App-link'
-          href='https://www.electronjs.org/'
-          target='_blank'
-          rel='noopener noreferrer'
-          id='electron-link'
-        >
-          Learn Electron
-        </a>
-      </div>
-    </div>
-  );
-};
+    <React.Fragment>
+      <Loader open={loading} />
+      {Boolean(error || message) && HandleNotifier()}
 
-export default App;
+      <ToastContainer draggable={true} autoClose={3000} />
+      <Router />
+    </React.Fragment>
+  );
+}
