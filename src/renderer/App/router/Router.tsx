@@ -5,11 +5,11 @@ import HomeRouter from "./HomeRouter";
 
 export default function Router() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {AuthRouter()}
         {HomeRouter()}
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

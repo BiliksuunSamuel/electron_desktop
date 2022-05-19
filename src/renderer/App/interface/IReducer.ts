@@ -1,4 +1,4 @@
-import { IOrder, IUser } from "./IModel";
+import { ICompanyInfo, IOrder, IUser } from "./IModel";
 
 export interface IResponseReducer {
   loading: boolean;
@@ -19,4 +19,9 @@ export interface IAccountsReducer {
 
 export interface ISettingsReducer {
   online: boolean;
+  order: IOrder | null;
+}
+
+export interface ICompanyInfoReducer {
+  company: ICompanyInfo;
 }

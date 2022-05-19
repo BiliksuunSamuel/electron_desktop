@@ -2,122 +2,86 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
   IconButton,
   Paper,
   Slide,
   TextField,
   Typography,
+  Modal,
+  makeStyles,
+  Divider,
 } from "@material-ui/core";
 import moment = require("moment");
 import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hook";
-import { InitialOrderContentInfo, NewOrderInfo } from "../../../data/ModelData";
-import { ResponseFail } from "../../../features/slice/ResponseSlice";
-import {
-  INewOrder,
-  IOrder,
-  IOrderContent,
-  IPaymentInfo,
-} from "../../../interface/IModel";
-import { resources } from "../../../resources/resources";
-import { ValidateOrderInfo } from "../../../services/Validation";
-import { request_styles } from "../style";
+import { useAppDispatch, useAppSelector } from "../app/hook";
+import { NewOrderInfo } from "../data/ModelData";
+import { ResponseFail } from "../features/slice/ResponseSlice";
+import { INewOrder, IOrder, IPaymentInfo } from "../interface/IModel";
+import { resources } from "../resources/resources";
+import { ValidateOrderInfo } from "../services/Validation";
 import { v4 as uuid } from "uuid";
-import { AddOrderThunk, NewOrderThunk } from "../../../functions/order";
+import { AddOrderThunk, NewOrderThunk } from "../functions/order";
 import Draggable from "react-draggable";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { TextField as MUITextFiel } from "@mui/material";
-import { OrderContent } from "../components";
-import { Input, InvoiceGenerator, StickyNote } from "../../../components";
-import { GenerateOTP } from "../../../services/OTPGenerator";
-import { RemoveRedEye } from "@mui/icons-material";
-import { CheckPaymentStatus, ValidateOrderContent } from "../services/services";
-export default function NewRequest() {
+import {
+  Close,
+  NoteAdd,
+  NoteAddOutlined,
+  RemoveRedEye,
+} from "@material-ui/icons";
+import { GenerateOTP } from "../services/OTPGenerator";
+import { request_styles } from "../pages/home/style";
+import Input from "./Input";
+
+interface IProps {
+  info: IOrder;
+  handleModal: () => void;
+}
+
+const style = makeStyles(
+  (theme) => ({
+    root: {
+      width: "100%",
+      height: "100%",
+      padding: 0,
+      margin: 0,
+      flex: 1,
+      background: "rgba(255,255,255,0.15)",
+      alignItems: "center",
+      justifyContent: "center",
+      display: "flex",
+      backdropFilter: "blur(1px)",
+      flexDirection: "column",
+    },
+  }),
+  { index: 1 }
+);
+export default function ManageRequest({ handleModal, info }: IProps) {
   const classes = request_styles();
-  const dispatch = useAppDispatch();
-  const [open, setOpen] = React.useState(false);
-  const { orders } = useAppSelector((state) => state.OrdersReducer);
-  const { online } = useAppSelector((state) => state.SettingsReducer);
-  const { user } = useAppSelector((state) => state.UserReducer);
-  const [content, setContent] = React.useState<IOrderContent>(
-    InitialOrderContentInfo
-  );
-  const [value, setValue] = React.useState<Date | null>(null);
-  const [order, setOrder] = React.useState<INewOrder>({
-    ...NewOrderInfo,
-    user: user ? user._id : "",
-  });
-  const [payment, setPayment] = React.useState(0);
-
-  function HandleAdd() {
-    try {
-      ValidateOrderInfo(order);
-      const Info: IOrder = { ...order, _id: "" };
-      if (payment !== 0) {
-        const paymentInfo: IPaymentInfo = {
-          date: moment().format(),
-          amount: payment,
-          id: GenerateOTP(),
-        };
-        Info.payment.push(paymentInfo);
-        Info.date_added = moment().format();
-      }
-      Info.payment_status = CheckPaymentStatus(
-        order.payment,
-        order.order.content
-      );
-      if (online) {
-        dispatch(AddOrderThunk(Info));
-      } else {
-        dispatch(NewOrderThunk([...orders, Info]));
-      }
-      setOrder({ ...NewOrderInfo, user: user ? user._id : "" });
-      setPayment(0);
-    } catch (error) {
-      dispatch(ResponseFail(error));
-    }
-  }
-
-  function HandleAddContent() {
-    try {
-      ValidateOrderContent(content);
-      setOrder({
-        ...order,
-        order: {
-          ...order.order,
-          content: [...order.order.content, content],
-        },
-      });
-      setContent(InitialOrderContentInfo);
-    } catch (error) {
-      dispatch(ResponseFail(error));
-    }
-  }
+  const styles = style();
+  const [order, setOrder] = React.useState<IOrder>(info);
+  const [payment, setPayment] = React.useState<number>(0);
   return (
-    <Box className={classes.root}>
-      {/* <StickyNote
-        handleNotes={(data) => setOrder({ ...order, notes: data })}
-        notes={order.notes}
-        note={{ id: "", text: "" }}
-      /> */}
-      <OrderContent
-        open={open}
-        handleOpen={() => setOpen(false)}
-        content={order.order.content}
-        setContent={(data) => {
-          setOrder({
-            ...order,
-            order: {
-              ...order.order,
-              content: data,
-            },
-          });
-        }}
-      />
-      <Slide direction="down" timeout={750} in>
+    <Modal className={styles.root} open={Boolean(info)}>
+      <React.Fragment>
+        <IconButton
+          onClick={handleModal}
+          color="secondary"
+          style={{
+            position: "absolute",
+            top: 10,
+            left: "50%",
+            margin: "0px 10px",
+            background: "#fff",
+            zIndex: 2,
+          }}
+          size="small"
+        >
+          <Close htmlColor="firebrick" />
+        </IconButton>
         <Draggable>
           <Paper elevation={2} className={classes.paper_container}>
             <Box className={classes.header}>
@@ -197,7 +161,6 @@ export default function NewRequest() {
                     variant="text"
                     size="small"
                     color="primary"
-                    onClick={() => setOpen(true)}
                   >
                     <RemoveRedEye />
                     <Typography variant="body2">View</Typography>
@@ -217,26 +180,12 @@ export default function NewRequest() {
                     size="small"
                     label="Unit Cost"
                     style={{ marginRight: 5, flex: 1 }}
-                    onChange={(e) =>
-                      setContent({
-                        ...content,
-                        unit_cost: parseFloat(e.target.value),
-                      })
-                    }
-                    value={content.unit_cost}
                   />
                   <TextField
                     variant="outlined"
                     size="small"
                     label="Quantity"
                     style={{ flex: 1 }}
-                    value={content.quantity}
-                    onChange={(e) =>
-                      setContent({
-                        ...content,
-                        quantity: parseInt(e.target.value),
-                      })
-                    }
                   />
                 </Box>
                 <Box
@@ -252,15 +201,10 @@ export default function NewRequest() {
                   <TextField
                     variant="outlined"
                     size="small"
-                    value={content.title}
-                    onChange={(e) =>
-                      setContent({ ...content, title: e.target.value })
-                    }
                     label="Title"
                     style={{ flex: 1 }}
                   />
                   <Button
-                    onClick={HandleAddContent}
                     style={{
                       flex: 0.35,
                       marginLeft: 5,
@@ -314,12 +258,6 @@ export default function NewRequest() {
                     size="small"
                     label="Amount"
                     type="number"
-                    value={payment}
-                    onChange={(e) => {
-                      if (!isNaN(parseFloat(e.target.value))) {
-                        setPayment(parseFloat(e.target.value));
-                      }
-                    }}
                     style={{ width: "100%", margin: "5px 0" }}
                   />
                   <Box
@@ -349,29 +287,12 @@ export default function NewRequest() {
                   <TextField
                     variant="outlined"
                     size="small"
-                    value={order.delivery.address}
-                    onChange={(e) =>
-                      setOrder({
-                        ...order,
-                        delivery: {
-                          ...order.delivery,
-                          address: e.target.value,
-                        },
-                      })
-                    }
                     label="Address"
                     style={{ width: "100%", margin: "5px 0" }}
                   />
                   <TextField
                     variant="outlined"
                     size="small"
-                    value={order.delivery.note}
-                    onChange={(e) =>
-                      setOrder({
-                        ...order,
-                        delivery: { ...order.delivery, note: e.target.value },
-                      })
-                    }
                     label="Statement/Note"
                     style={{ width: "100%", margin: "5px 0" }}
                   />
@@ -409,7 +330,6 @@ export default function NewRequest() {
                   }}
                 >
                   <Button
-                    onClick={HandleAdd}
                     style={{
                       height: 30,
                       alignSelf: "flex-end",
@@ -426,7 +346,7 @@ export default function NewRequest() {
             </Box>
           </Paper>
         </Draggable>
-      </Slide>
-    </Box>
+      </React.Fragment>
+    </Modal>
   );
 }

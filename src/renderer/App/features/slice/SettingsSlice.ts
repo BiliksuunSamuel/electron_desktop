@@ -8,9 +8,12 @@ const SettingsReducer = createSlice({
     SetNetworkState: (state, action) => {
       state.online = action.payload;
     },
+    SetOrder: (state, action) => {
+      state.order = action.payload;
+    },
   },
 });
 
 export default SettingsReducer.reducer;
 
-export const { SetNetworkState } = SettingsReducer.actions;
+export const { SetNetworkState, SetOrder } = SettingsReducer.actions;

@@ -1,4 +1,4 @@
-import { InfoOutlined, ShoppingBasket } from "@material-ui/icons";
+import { Code, InfoOutlined, ShoppingBasket } from "@material-ui/icons";
 import * as React from "react";
 import { MdCheck, MdDesignServices, MdPending } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
@@ -25,4 +25,5 @@ export const SidebarMenu: {
   },
   { title: "Users", icon: <FaUsers size={24} />, route: "/home/users" },
   { title: "About", icon: <InfoOutlined />, route: "/home/about" },
+  { title: "Developer", icon: <Code />, route: "/home/about" },
 ];

@@ -33,7 +33,7 @@ export function ValidateOrderInfo(info: INewOrder) {
   if (Boolean(info.customer.email) && !email_regex.test(info.customer.email)) {
     throw "Invalid Email Address";
   }
-  if (info.order.title.length <= 0) {
-    throw "Please Enter Order Title or Name";
+  if (info.order.content.length <= 0) {
+    throw "Please Add Item To The Order";
   }
 }

@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core";
+import colors from "../../../constants/colors";
 import { resources } from "../../../resources/resources";
 
 export default makeStyles(
@@ -52,7 +53,7 @@ export default makeStyles(
       alignItems: "center",
       justifyContent: "center",
       padding: theme.spacing(1),
-      background: "#00416a",
+      background: colors._076585,
     },
     header_top: {
       display: "flex",

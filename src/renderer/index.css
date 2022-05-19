@@ -1,12 +1,19 @@
 @font-face {
-  font-family: "thematesh";
-  src: "./thetematesh.ttf" format("truetype");
+  font-family: "compagnon light";
+  src: "./comp.otf" format("truetype");
+}
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "compagnon light";
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 10px;
+  font-size: 11px;
   font-family: maria sans;
   width: "100vw";
   height: "100vh";
@@ -48,5 +55,12 @@ body {
 }
 
 .title {
-  font-family: "Monda, sans-serif";
+  font-family: "compagnon light";
+}
+
+.invoice {
+  font-family: "compagnon light";
+  width: "100%";
+  text-align: left;
+  font-size: 0.85rem;
 }

@@ -34,7 +34,7 @@ export default function HomePage() {
       <Box
         style={{
           transition: "all 0.45s ease-in-out",
-          width: sidebar ? 250 : 0,
+          width: sidebar ? 240 : 0,
         }}
       >
         <Sidebar open={sidebar} toggleSidebar={() => setSidebar(!sidebar)} />

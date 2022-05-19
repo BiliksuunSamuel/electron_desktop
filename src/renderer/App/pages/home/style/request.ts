@@ -24,7 +24,8 @@ export default makeStyles(
       minHeight: 450,
       padding: theme.spacing(0),
       overflow: "hidden",
-      boxShadow: theme.shadows[5],
+      boxShadow: theme.shadows[1],
+      borderRadius: 0,
     },
     header: {
       height: 60,
@@ -46,7 +47,6 @@ export default makeStyles(
       alignItems: "center",
       justifyContent: "flex-start",
       width: "100%",
-      height: "100%",
       padding: theme.spacing(1),
       overflow: "hidden",
     },
@@ -73,7 +73,7 @@ export default makeStyles(
       width: "100%",
     },
     title_label: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: "bold",
       width: "90%",
       textAlign: "left",

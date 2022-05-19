@@ -6,11 +6,11 @@ let mainWindow: BrowserWindow;
 const isDev: boolean = process.env.ELECTRON_ENV == "dev";
 
 const mainOpts: Electron.BrowserWindowConstructorOptions = {
-  width: 1000,
-  height: 700,
-  minWidth: 800,
-  minHeight: 500,
-  // autoHideMenuBar: true,
+  width: 1100,
+  height: 750,
+  minWidth: 900,
+  minHeight: 600,
+  autoHideMenuBar: true,
   center: true,
   webPreferences: {
     nodeIntegration: true,
@@ -23,10 +23,12 @@ const mainOpts: Electron.BrowserWindowConstructorOptions = {
 };
 const config: SplashScreen.Config = {
   windowOpts: mainOpts,
-  templateUrl: `splash.html`,
+  templateUrl: isDev
+    ? path.join(__dirname, "/icons/splash.html")
+    : "./build/splash.html",
   splashScreenOpts: {
-    width: 425,
-    height: 325,
+    width: 250,
+    height: 250,
     backgroundColor: colors._076585,
     autoHideMenuBar: true,
     resizable: false,

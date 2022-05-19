@@ -91,25 +91,7 @@ export default function OrderContent({
   content,
 }: IProps) {
   const classes = styles();
-  const [dimensions, setDimensions] = React.useState<{
-    width: number;
-    height: number;
-  }>({ width: 300, height: 300 });
-  const [item, setItem] = React.useState<IOrderContent>({
-    id: "",
-    title: "",
-    quantity: 0,
-  });
 
-  function HandleAdd() {
-    if (Boolean(item.title.length > 0 && !isNaN(item.quantity))) {
-      setContent([
-        ...content,
-        { id: uuid(), title: item.title, quantity: item.quantity },
-      ]);
-      setItem({ id: "", quantity: 0, title: "" });
-    }
-  }
   return (
     <Modal open={open} className={classes.root}>
       <Box
@@ -131,7 +113,7 @@ export default function OrderContent({
                 style={{ fontSize: 18, marginLeft: 10 }}
                 variant="caption"
               >
-                Add Content
+                Order Content
               </Typography>
               <IconButton
                 onClick={handleOpen}
@@ -147,8 +129,9 @@ export default function OrderContent({
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell align="center">Name</TableCell>
-                        <TableCell align="center">Quantity</TableCell>
+                        <TableCell align="center">Title</TableCell>
+                        <TableCell align="center">C/U</TableCell>
+                        <TableCell align="center">Qnty</TableCell>
                         <TableCell align="center">
                           <Edit />
                         </TableCell>
@@ -158,6 +141,7 @@ export default function OrderContent({
                       {content.map((c) => (
                         <TableRow key={c.id}>
                           <TableCell align="center">{c.title}</TableCell>
+                          <TableCell align="center">{c.unit_cost}</TableCell>
                           <TableCell align="center">{c.quantity}</TableCell>
                           <TableCell align="center">
                             <IconButton
@@ -177,44 +161,6 @@ export default function OrderContent({
                   </Table>
                 </TableContainer>
               )}
-              <Box>
-                <TextField
-                  className={classes.input}
-                  variant="outlined"
-                  size="small"
-                  label="Title"
-                  onChange={(e) => setItem({ ...item, title: e.target.value })}
-                />
-                <Box className={classes.input_container}>
-                  <TextField
-                    className={classes.input}
-                    variant="outlined"
-                    size="small"
-                    label="Quantity"
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      setItem({ ...item, quantity: parseInt(e.target.value) })
-                    }
-                    style={{ flex: 1, margin: 0 }}
-                  />
-                  <Button
-                    style={{
-                      flex: 0.25,
-                      height: 35,
-                      marginLeft: 5,
-                      alignSelf: "center",
-                      marginTop: 8,
-                    }}
-                    onClick={HandleAdd}
-                    variant="outlined"
-                    size="small"
-                    color="primary"
-                  >
-                    Add
-                  </Button>
-                </Box>
-              </Box>
             </Box>
           </Paper>
         </Draggable>

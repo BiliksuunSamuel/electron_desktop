@@ -12,9 +12,9 @@ import { Backup, Close } from "@material-ui/icons";
 import { BackupOutlined } from "@mui/icons-material";
 import * as React from "react";
 import Draggable from "react-draggable";
-import { MdOutlinePadding, MdOutlinePending } from "react-icons/md";
-import { useAppSelector } from "../../../app/hook";
+import { useAppSelector, useAppDispatch } from "../../../app/hook";
 import colors from "../../../constants/colors";
+import { BackupOrderThunk } from "../../../functions/order";
 
 interface IProps {
   handleModal: () => void;
@@ -76,6 +76,8 @@ const styles = makeStyles(
 export default function BackupOrdersModal({ handleModal, open }: IProps) {
   const classes = styles();
   const { orders } = useAppSelector((state) => state.OrdersReducer);
+  const { loading } = useAppSelector((state) => state.ResponseReducer);
+  const dispatch = useAppDispatch();
   return (
     <Modal className={classes.modal} open={open}>
       <Draggable>
@@ -139,14 +141,28 @@ export default function BackupOrdersModal({ handleModal, open }: IProps) {
                 Files
               </Typography>
             </Box>
-            <Button
-              size="small"
-              style={{ textTransform: "none", width: "100%", margin: "10px 0" }}
-              variant="contained"
-              color="primary"
-            >
-              Commit Changes
-            </Button>
+            {Boolean(orders.filter((order) => order._id === "")) && (
+              <Button
+                size="small"
+                style={{
+                  textTransform: "none",
+                  width: "100%",
+                  margin: "10px 0",
+                }}
+                variant="contained"
+                color="primary"
+                onClick={() =>
+                  dispatch(
+                    BackupOrderThunk([
+                      ...orders.filter((order) => order._id === ""),
+                    ])
+                  )
+                }
+                disabled={loading}
+              >
+                Commit Changes
+              </Button>
+            )}
           </Box>
         </Paper>
       </Draggable>

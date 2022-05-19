@@ -1,68 +1,68 @@
-import * as HtmlWebPackPlugin from 'html-webpack-plugin';
-import * as webpack from 'webpack';
+import * as HtmlWebPackPlugin from "html-webpack-plugin";
+import * as webpack from "webpack";
 
 const config: webpack.Configuration[] = [
   {
-    entry: './src/main/index.ts',
-    name: 'electron',
-    target: 'electron-main',
+    entry: "./src/main/index.ts",
+    name: "electron",
+    target: "electron-main",
     module: {
       rules: [
         {
           test: /\.ts?$/,
-          use: 'ts-loader',
-          exclude: /node_modules/
-        }
-      ]
+          use: "ts-loader",
+          exclude: /node_modules/,
+        },
+      ],
     },
     resolve: {
-      extensions: ['*', '.js', '.ts', '.json']
+      extensions: ["*", ".js", ".ts", ".json"],
     },
     output: {
-      path: __dirname + '/build',
-      filename: 'app.js'
-    }
+      path: __dirname + "/build",
+      filename: "app.js",
+    },
   },
   {
-    entry: './src/renderer/index.tsx',
-    name: 'react',
-    target: 'electron-renderer',
+    entry: "./src/renderer/index.tsx",
+    name: "react",
+    target: "electron-renderer",
     module: {
       rules: [
         {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          loader: 'ts-loader'
+          loader: "ts-loader",
         },
         {
           test: /\.css$/,
-          loaders: ['style-loader', 'css-loader']
+          loaders: ["style-loader", "css-loader"],
         },
         {
           test: /\.(png|svg|jpg|gif)$/,
-          use: ['file-loader']
-        }
-      ]
+          use: ["file-loader"],
+        },
+      ],
     },
     resolve: {
-      extensions: ['*', '.js', '.jsx', '.ts', '.tsx', '.css', '.json', '.svg']
+      extensions: ["*", ".js", ".jsx", ".ts", ".tsx", ".css", ".json", ".svg"],
     },
     output: {
-      path: __dirname + '/build',
-      publicPath: './',
-      filename: 'bundle.js'
+      path: __dirname + "/build",
+      publicPath: "./",
+      filename: "bundle.js",
     },
     devServer: {
-      contentBase: __dirname + '/build/',
-      compress: true
+      contentBase: __dirname + "/build/",
+      compress: true,
     },
     plugins: [
       new HtmlWebPackPlugin({
-        filename: 'index.html',
-        template: 'src/renderer/index.html'
-      })
-    ]
-  }
+        filename: "index.html",
+        template: "src/renderer/index.html",
+      }),
+    ],
+  },
 ];
 
 export default config;

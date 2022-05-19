@@ -1,11 +1,13 @@
 import * as React from "react";
 import Router from "./router/Router";
 import "../index.css";
-import { Loader } from "./components";
+import { InvoiceGenerator, Loader } from "./components";
 import { useAppDispatch, useAppSelector } from "./app/hook";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ClearResponse } from "./features/slice/ResponseSlice";
+import { ThemeProvider } from "@material-ui/core";
+import { appTheme } from "./configuration/themeConfig";
 export default function App() {
   const { loading } = useAppSelector((state) => state.ResponseReducer);
   const { error, message } = useAppSelector((state) => state.ResponseReducer);
@@ -31,12 +33,15 @@ export default function App() {
       });
   }
   return (
-    <React.Fragment>
-      <Loader open={loading} />
-      {Boolean(error || message) && HandleNotifier()}
+    <ThemeProvider theme={appTheme}>
+      <React.Fragment>
+        <Loader open={loading} />
+        <InvoiceGenerator />
+        {Boolean(error || message) && HandleNotifier()}
 
-      <ToastContainer draggable={true} autoClose={3000} />
-      <Router />
-    </React.Fragment>
+        <ToastContainer draggable={true} autoClose={3000} />
+        <Router />
+      </React.Fragment>
+    </ThemeProvider>
   );
 }

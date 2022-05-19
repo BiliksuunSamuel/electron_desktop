@@ -5,6 +5,7 @@ import {
   OrdersReducer,
   AccountsReducer,
   SettingsReducer,
+  CompanyInfoReducer,
 } from "../features";
 export default combineReducers({
   ResponseReducer,
@@ -12,4 +13,5 @@ export default combineReducers({
   OrdersReducer,
   AccountsReducer,
   SettingsReducer,
+  CompanyInfoReducer,
 });

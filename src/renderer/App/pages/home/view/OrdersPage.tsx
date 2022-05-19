@@ -19,11 +19,16 @@ import { GetOrdersThunk } from "../../../functions/order";
 import { GetPaymentAmount } from "../services/services";
 import { orders_styles, global_styles } from "../style";
 import { FiEdit } from "react-icons/fi";
+import { FaFileInvoice } from "react-icons/fa";
+import { SetOrder } from "../../../features/slice/SettingsSlice";
+import { IOrder } from "../../../interface/IModel";
+import { ManageRequest } from "../../../components";
 export default function OrdersPage() {
   const dispatch = useAppDispatch();
   const global = global_styles();
   const { online } = useAppSelector((state) => state.SettingsReducer);
   const { orders } = useAppSelector((state) => state.OrdersReducer);
+  const [order, setOrder] = React.useState<IOrder | null>(null);
   const classes = orders_styles();
 
   React.useEffect(() => {
@@ -34,6 +39,9 @@ export default function OrdersPage() {
 
   return (
     <Box component={Container} className={classes.root}>
+      {Boolean(order) && (
+        <ManageRequest handleModal={() => setOrder(null)} info={order} />
+      )}
       <Container className={classes.container}>
         <Box component={Paper} className={classes.header}>
           <Box className={classes.header_left}>
@@ -54,9 +62,9 @@ export default function OrdersPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">Customer Name</TableCell>
-                    <TableCell align="center">Phone Number</TableCell>
                     <TableCell align="center">Amount Paid</TableCell>
                     <TableCell align="center">Others</TableCell>
+                    <TableCell align="center">Invoice</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -65,15 +73,24 @@ export default function OrdersPage() {
                       <TableCell className={global.grid_cell} align="center">
                         {order.customer.name}
                       </TableCell>
-                      <TableCell className={global.grid_cell} align="center">
-                        {order.customer.phone}
-                      </TableCell>
+
                       <TableCell className={global.grid_cell} align="center">
                         {GetPaymentAmount(order.payment)}
                       </TableCell>
                       <TableCell className={global.grid_cell} align="center">
-                        <IconButton size="medium">
+                        <IconButton
+                          onClick={() => setOrder(order)}
+                          size="medium"
+                        >
                           <FiEdit />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell className={global.grid_cell} align="center">
+                        <IconButton
+                          onClick={() => dispatch(SetOrder(order))}
+                          size="medium"
+                        >
+                          <FaFileInvoice />
                         </IconButton>
                       </TableCell>
                     </TableRow>
