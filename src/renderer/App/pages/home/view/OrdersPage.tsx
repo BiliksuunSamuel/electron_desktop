@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Edit, Print } from "@material-ui/icons";
 import * as React from "react";
 import Draggable from "react-draggable";
 import { useAppDispatch, useAppSelector } from "../../../app/hook";
@@ -87,6 +87,7 @@ export default function OrdersPage() {
                     <TableCell align="center">Amount Paid</TableCell>
                     <TableCell align="center">Arears</TableCell>
                     <TableCell align="center">Others</TableCell>
+                    <TableCell align="center">Receipt</TableCell>
                     <TableCell align="center">Invoice</TableCell>
                   </TableRow>
                 </TableHead>
@@ -117,6 +118,11 @@ export default function OrdersPage() {
                           size="medium"
                         >
                           <FiEdit />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell className={global.grid_cell} align="center">
+                        <IconButton size="small">
+                          <Print />
                         </IconButton>
                       </TableCell>
                       <TableCell className={global.grid_cell} align="center">

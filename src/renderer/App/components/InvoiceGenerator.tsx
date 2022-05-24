@@ -12,6 +12,7 @@ import {
   TableCell,
   TableBody,
   IconButton,
+  Container,
 } from "@material-ui/core";
 import * as moment from "moment";
 import * as React from "react";
@@ -47,39 +48,55 @@ const styles = makeStyles(
       overflow: "hidden",
       position: "relative",
     },
+    main_container: {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: theme.spacing(2),
+      background: theme.palette.common.white,
+    },
 
     container: {
-      width: 350,
+      width: 600,
       paddingBottom: 50,
       alignSelf: "center",
-      borderStyle: "none",
       outline: "none",
       background: "#fff",
-      padding: theme.spacing(1),
+      padding: theme.spacing(0),
       borderRadius: 0,
       overflow: "hidden",
       fontSize: "1rem",
       fontFamily: "impact",
-      border: "1px solid #000",
+      border: "1px solid rgba(211,211,211,0.85)",
+      boxShadow: theme.shadows[1],
     },
     header: {
       padding: theme.spacing(1),
       display: "flex",
-      flexDirection: "row",
+      flexDirection: "column",
       alignItems: "center",
       justifyContent: "space-between",
+      background: theme.palette.primary.main,
+      color: theme.palette.common.white,
     },
     header_left: {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      width: "100%",
+      paddingLeft: theme.spacing(2),
     },
     header_right: {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      width: "100%",
+      padding: 0,
     },
     logo_container: {
       width: 40,
@@ -175,304 +192,331 @@ export default function InvoiceGenerator() {
         </IconButton>
         <Draggable>
           {order && (
-            <Paper
-              ref={contentRef}
-              component="div"
-              elevation={0}
-              className={classes.container}
-            >
-              <Box className={classes.header}>
-                <Box className={classes.header_left}>
-                  <Box className={classes.logo_container}>
-                    <img src={resources.logo} className="img" />
+            <Container className={classes.main_container}>
+              <div ref={contentRef} className={classes.container}>
+                <Box className={classes.header}>
+                  <Box className={classes.header_left}>
+                    <Box className={classes.logo_container}>
+                      <img src={resources.logo} className="img" />
+                    </Box>
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        color: "#fff",
+                      }}
+                      variant="body1"
+                      className={classes.company_title}
+                    >
+                      Feed Konzept
+                    </Typography>
                   </Box>
-                  <Typography
-                    style={{
-                      fontFamily: typefacefont,
-                      fontSize: 16,
-                    }}
-                    variant="body1"
-                    className={classes.company_title}
+                  <Box
+                    style={{ paddingLeft: 40 }}
+                    className={classes.header_right}
                   >
-                    Feed Konzept
-                  </Typography>
-                </Box>
-                <Box className={classes.header_right}>
-                  <Typography className={classes.tag} variant="body1">
-                    Invoice
-                  </Typography>
-                </Box>
-              </Box>
-              <hr />
-              <Box style={{ marginBottom: 15 }}>
-                <Box
-                  style={{
-                    paddingLeft: 7,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography
-                    style={{
-                      fontFamily: typefacefont,
-                      fontWeight: "normal",
-                      fontSize: 14,
-                    }}
-                    component="p"
-                    className="invoice"
-                    variant="caption"
-                  >
-                    Name: {order.customer.name}
-                  </Typography>
-                  <Typography
-                    style={{ fontFamily: typefacefont }}
-                    component="p"
-                    className="invoice"
-                    variant="caption"
-                  >
-                    Address:{" "}
-                    {Boolean(order.delivery.address)
-                      ? order.delivery.address
-                      : "N/A"}
-                  </Typography>
-                  <Typography
-                    style={{ fontFamily: typefacefont }}
-                    component="p"
-                    className="invoice"
-                    variant="caption"
-                  >
-                    Tel: {order.customer.phone}
-                  </Typography>
-                  <Typography
-                    style={{ fontFamily: typefacefont }}
-                    component="p"
-                    className="invoice"
-                    variant="caption"
-                  >
-                    Paid:{" "}
-                    {` ${currency}${GetPaymentAmount(order.payment).toFixed(
-                      2
-                    )}`}
-                  </Typography>
-                </Box>
-              </Box>
-              <hr />
-              <Box style={{ marginBottom: 15 }}>
-                <Box
-                  style={{
-                    color: colors._000,
-                    paddingLeft: 7,
-                  }}
-                >
-                  <Typography
-                    style={{
-                      fontFamily: typefacefont,
-                      fontWeight: "normal",
-                      fontSize: 12,
-                    }}
-                    component="p"
-                    variant="body2"
-                  >
-                    Content Info:
-                  </Typography>
+                    <Typography
+                      style={{ color: "#fff" }}
+                      className={classes.tag}
+                      variant="body1"
+                    >
+                      Invoice
+                    </Typography>
+                  </Box>
                 </Box>
                 <hr />
-                <Box style={{ paddingLeft: 7, marginTop: 5 }}>
-                  <TableContainer component={Box}>
-                    <Table>
-                      <TableHead>
-                        <TableRow className={global.grid_cell}>
-                          <TableCell
-                            className={global.grid_cell}
-                            style={{
-                              fontFamily: typefacefont,
-                              fontSize: 12,
-                              height: 20,
-                            }}
-                          >
-                            Item
-                          </TableCell>
-                          <TableCell
-                            className={global.grid_cell}
-                            align="center"
-                            style={{
-                              fontFamily: typefacefont,
-                              fontSize: 12,
-                              height: 20,
-                            }}
-                          >
-                            Unit Cost
-                          </TableCell>
-                          <TableCell
-                            className={global.grid_cell}
-                            align="center"
-                            style={{
-                              fontFamily: typefacefont,
-                              fontSize: 12,
-                              height: 20,
-                            }}
-                          >
-                            Quantity
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {order.order.content.map((content) => (
-                          <TableRow
-                            key={content.id}
-                            className={global.grid_cell}
-                          >
+                <Box style={{ marginBottom: 15 }}>
+                  <Box
+                    style={{
+                      paddingLeft: 7,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        fontWeight: "normal",
+                        fontSize: 14,
+                      }}
+                      component="p"
+                      className="invoice"
+                      variant="caption"
+                    >
+                      Name: {order.customer.name}
+                    </Typography>
+                    <Typography
+                      style={{ fontFamily: typefacefont }}
+                      component="p"
+                      className="invoice"
+                      variant="caption"
+                    >
+                      Address:{" "}
+                      {Boolean(order.delivery.address)
+                        ? order.delivery.address
+                        : "N/A"}
+                    </Typography>
+                    <Typography
+                      style={{ fontFamily: typefacefont }}
+                      component="p"
+                      className="invoice"
+                      variant="caption"
+                    >
+                      Tel: {order.customer.phone}
+                    </Typography>
+                    <Typography
+                      style={{ fontFamily: typefacefont }}
+                      component="p"
+                      className="invoice"
+                      variant="caption"
+                    >
+                      Paid:{" "}
+                      {` ${currency}${GetPaymentAmount(order.payment).toFixed(
+                        2
+                      )}`}
+                    </Typography>
+                  </Box>
+                </Box>
+                <hr />
+                <Box style={{ marginBottom: 15 }}>
+                  <Box
+                    style={{
+                      color: colors._000,
+                      paddingLeft: 7,
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        fontWeight: "normal",
+                        fontSize: 12,
+                      }}
+                      component="p"
+                      variant="body2"
+                    >
+                      Order Info:
+                    </Typography>
+                  </Box>
+                  <hr />
+                  <Box style={{ paddingLeft: 7, marginTop: 5 }}>
+                    <TableContainer component={Box}>
+                      <Table>
+                        <TableHead>
+                          <TableRow className={global.grid_cell}>
                             <TableCell
+                              className={global.grid_cell}
                               style={{
-                                height: 20,
                                 fontFamily: typefacefont,
                                 fontSize: 12,
+                                height: 20,
                               }}
-                              className={global.grid_cell}
                             >
-                              {content.title}
+                              Item
                             </TableCell>
                             <TableCell
-                              style={{
-                                height: 20,
-                                fontFamily: typefacefont,
-                                fontSize: 12,
-                              }}
                               className={global.grid_cell}
                               align="center"
+                              style={{
+                                fontFamily: typefacefont,
+                                fontSize: 12,
+                                height: 20,
+                              }}
                             >
-                              {currency + content.unit_cost}
+                              Unit Cost
                             </TableCell>
                             <TableCell
-                              style={{
-                                height: 20,
-                                fontFamily: typefacefont,
-                                fontSize: 12,
-                              }}
                               className={global.grid_cell}
                               align="center"
+                              style={{
+                                fontFamily: typefacefont,
+                                fontSize: 12,
+                                height: 20,
+                              }}
                             >
-                              {content.quantity}
+                              Quantity
+                            </TableCell>
+                            <TableCell
+                              className={global.grid_cell}
+                              align="center"
+                              style={{
+                                fontFamily: typefacefont,
+                                fontSize: 12,
+                                height: 20,
+                              }}
+                            >
+                              Cost
                             </TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                          {order.order.content.map((content) => (
+                            <TableRow
+                              key={content.id}
+                              className={global.grid_cell}
+                            >
+                              <TableCell
+                                style={{
+                                  height: 20,
+                                  fontFamily: typefacefont,
+                                  fontSize: 12,
+                                }}
+                                className={global.grid_cell}
+                              >
+                                {content.title}
+                              </TableCell>
+                              <TableCell
+                                style={{
+                                  height: 20,
+                                  fontFamily: typefacefont,
+                                  fontSize: 12,
+                                }}
+                                className={global.grid_cell}
+                                align="center"
+                              >
+                                {currency + content.unit_cost}
+                              </TableCell>
+                              <TableCell
+                                style={{
+                                  height: 20,
+                                  fontFamily: typefacefont,
+                                  fontSize: 12,
+                                }}
+                                className={global.grid_cell}
+                                align="center"
+                              >
+                                {content.quantity}
+                              </TableCell>
+                              <TableCell
+                                style={{
+                                  height: 20,
+                                  fontFamily: typefacefont,
+                                  fontSize: 12,
+                                }}
+                                className={global.grid_cell}
+                                align="center"
+                              >
+                                {currency +
+                                  content.quantity * content.unit_cost}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                  <Box
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      paddingLeft: 7,
+                      width: "100%",
+                      marginTop: 15,
+                      paddingRight: 7,
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        fontSize: 12,
+                        fontWeight: "bold",
+                      }}
+                      variant="caption"
+                    >
+                      Total
+                    </Typography>
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        fontSize: 12,
+                        fontWeight: "bold",
+                      }}
+                      variant="caption"
+                    >
+                      {currency +
+                        GetAmountDue(order.order.content).toFixed(2).toString()}
+                    </Typography>
+                  </Box>
                 </Box>
+
+                <hr />
+                <Box style={{ marginBottom: 15 }}>
+                  <Box
+                    style={{
+                      color: colors._000,
+                      paddingLeft: 7,
+                      paddingRight: 7,
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        fontFamily: typefacefont,
+                        fontSize: 12,
+                      }}
+                      component="p"
+                      variant="caption"
+                    >
+                      Order Statement/Description:
+                    </Typography>
+                  </Box>
+                  <Box style={{ paddingLeft: 7 }}>
+                    <Typography
+                      style={{
+                        width: "100%",
+                        textAlign: "left",
+                        fontFamily: typefacefont,
+                        fontSize: 12,
+                      }}
+                      variant="caption"
+                    >
+                      {order.delivery.note}
+                    </Typography>
+                  </Box>
+                </Box>
+                <hr style={{ marginTop: 10 }} />
                 <Box
                   style={{
+                    width: "100%",
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingLeft: 7,
-                    width: "100%",
-                    marginTop: 15,
-                    paddingRight: 7,
-                  }}
-                >
-                  <Typography
-                    style={{
-                      fontFamily: typefacefont,
-                      fontSize: 12,
-                      fontWeight: "bold",
-                    }}
-                    variant="caption"
-                  >
-                    Total
-                  </Typography>
-                  <Typography
-                    style={{
-                      fontFamily: typefacefont,
-                      fontSize: 12,
-                      fontWeight: "bold",
-                    }}
-                    variant="caption"
-                  >
-                    {currency +
-                      GetAmountDue(order.order.content).toFixed(2).toString()}
-                  </Typography>
-                </Box>
-              </Box>
+                    justifyContent: "flex-start",
 
-              <hr />
-              <Box style={{ marginBottom: 15 }}>
-                <Box
-                  style={{
-                    color: colors._000,
                     paddingLeft: 7,
-                    paddingRight: 7,
                   }}
                 >
+                  <Phone
+                    style={{ marginRight: 4 }}
+                    fontSize="small"
+                    htmlColor="#d0d0d0"
+                  />
                   <Typography
+                    variant="body2"
                     style={{
                       fontFamily: typefacefont,
                       fontSize: 12,
                     }}
-                    component="p"
-                    variant="caption"
                   >
-                    Order Statement/Description:
+                    {company.tel}
                   </Typography>
-                </Box>
-                <Box style={{ paddingLeft: 7 }}>
+                  <Divider orientation="vertical" />
+                  <LocationCity
+                    style={{ margin: "0 5px" }}
+                    fontSize="small"
+                    htmlColor="#d0d0d0"
+                  />
                   <Typography
+                    variant="body2"
                     style={{
-                      width: "100%",
-                      textAlign: "left",
                       fontFamily: typefacefont,
                       fontSize: 12,
                     }}
-                    variant="caption"
                   >
-                    {order.delivery.note}
+                    {company.address}
                   </Typography>
                 </Box>
-              </Box>
-              <hr style={{ marginTop: 10 }} />
-              <Box
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-
-                  paddingLeft: 7,
-                }}
-              >
-                <Phone
-                  style={{ marginRight: 4 }}
-                  fontSize="small"
-                  htmlColor="#d0d0d0"
-                />
-                <Typography
-                  variant="body2"
-                  style={{
-                    fontFamily: typefacefont,
-                    fontSize: 12,
-                  }}
-                >
-                  {company.tel}
-                </Typography>
-                <Divider orientation="vertical" />
-                <LocationCity
-                  style={{ margin: "0 5px" }}
-                  fontSize="small"
-                  htmlColor="#d0d0d0"
-                />
-                <Typography
-                  variant="body2"
-                  style={{
-                    fontFamily: typefacefont,
-                    fontSize: 12,
-                  }}
-                >
-                  {company.address}
-                </Typography>
-              </Box>
-            </Paper>
+              </div>
+            </Container>
           )}
         </Draggable>
       </React.Fragment>
