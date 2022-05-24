@@ -59,7 +59,7 @@ const styles = makeStyles(
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "flex-start",
-      width: "90%",
+      width: "100%",
       alignSelf: "center",
       margin: theme.spacing(1, 0),
     },
@@ -100,7 +100,7 @@ export default function CustomerInfoModal({ open, handleClose }: IProps) {
             label="Motto"
             value={info.motto}
           />
-          <Box className={classes.buttons_container}>
+          <Box style={{ width: "100%" }} className={classes.buttons_container}>
             <Button
               onClick={() => dispatch(SetCompanyInfoThunk(info))}
               style={{ width: "100%", margin: "5px,0" }}
@@ -111,7 +111,7 @@ export default function CustomerInfoModal({ open, handleClose }: IProps) {
               Save Changes
             </Button>
             <Button
-              style={{ width: "100%" }}
+              style={{ width: "100%", marginTop: 8 }}
               onClick={handleClose}
               variant="outlined"
               size="small"

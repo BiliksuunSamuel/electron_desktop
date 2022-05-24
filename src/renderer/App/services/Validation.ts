@@ -1,6 +1,6 @@
 import { INewOrder, IUser } from "../interface/IModel";
 
-const phone_regex = /^\d{10}$/;
+export const phone_regex = /^\d{10}$/;
 const email_regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 export function ValidateUserInfo(info: {

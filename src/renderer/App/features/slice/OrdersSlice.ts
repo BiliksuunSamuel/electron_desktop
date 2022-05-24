@@ -5,6 +5,7 @@ import {
   AddOrderThunk,
   GetOrdersThunk,
   NewOrderThunk,
+  OrderUpdateThunk,
 } from "../../functions/order";
 
 const OrdersReducer = createSlice({
@@ -27,6 +28,9 @@ const OrdersReducer = createSlice({
         state.orders = action.payload;
       })
       .addCase(BackupOrdersThunk.fulfilled, (state, action) => {
+        state.orders = action.payload.data;
+      })
+      .addCase(OrderUpdateThunk.fulfilled, (state, action) => {
         state.orders = action.payload.data;
       });
   },

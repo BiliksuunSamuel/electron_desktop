@@ -6,3 +6,5 @@ export { default as ProfilePage } from "./ProfilePage";
 export { default as AboutPage } from "./AboutPage";
 export { default as PendingOrdersPage } from "./PendingOrdersPage";
 export { default as ApprovedOrdersPage } from "./ApprovedOrdersPage";
+export { default as ServicesPage } from "./ServicesPage";
+export { default as ProductsPage } from "./ProductsPage";

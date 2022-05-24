@@ -26,7 +26,7 @@ export default makeStyles(
     header: {
       padding: theme.spacing(1),
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
       alignit: "center",
       justifyContent: "space-between",
       borderRadius: 0,
@@ -53,7 +53,7 @@ export default makeStyles(
       alignItems: "center",
       padding: 10,
       marginTop: 20,
-      boxShadow: theme.shadows[2],
+      boxShadow: theme.shadows[1],
       [theme.breakpoints.down("sm")]: {
         width: "95%",
       },

@@ -1,5 +1,13 @@
 import moment = require("moment");
-import { IOrder, IOrderContent, IPaymentInfo } from "../../../interface/IModel";
+import { InferProps } from "prop-types";
+import {
+  IOrder,
+  IOrderContent,
+  IPaymentInfo,
+  IProduct,
+  IUser,
+} from "../../../interface/IModel";
+import { phone_regex } from "../../../services/Validation";
 import { IGridRow } from "../interface/IDataGrid";
 
 export function PrepareOrdersGridData(orders: IOrder[]) {
@@ -66,5 +74,33 @@ export function CheckPaymentStatus(
     return 0;
   } else {
     return 1;
+  }
+}
+
+interface IPwdProps {
+  password: string;
+  comfirm_password: string;
+}
+export function ValidatePassword({ password, comfirm_password }: IPwdProps) {
+  if (password.length <= 0) {
+    throw "Password Required";
+  }
+  if (password !== comfirm_password) {
+    throw "password doesn't match";
+  }
+}
+
+export function ValidateAccountInfo(info: IUser) {
+  if (info.username.length <= 0) {
+    throw "Username Required";
+  }
+  if (!phone_regex.test(info.phone)) {
+    throw "Invalid Phone Number";
+  }
+}
+
+export function ValidateProductInfo(info: IProduct) {
+  if (info.name.length <= 0) {
+    throw "Product Name Required";
   }
 }

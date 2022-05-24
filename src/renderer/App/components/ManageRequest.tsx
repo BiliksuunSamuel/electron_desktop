@@ -10,17 +10,32 @@ import {
   Modal,
   makeStyles,
   Divider,
+  MenuItem,
 } from "@material-ui/core";
 import moment = require("moment");
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../app/hook";
-import { NewOrderInfo } from "../data/ModelData";
+import {
+  InitialOrderContentInfo,
+  NewOrderInfo,
+  InitialProductInfo,
+} from "../data/ModelData";
 import { ResponseFail } from "../features/slice/ResponseSlice";
-import { INewOrder, IOrder, IPaymentInfo } from "../interface/IModel";
+import {
+  INewOrder,
+  IOrder,
+  IOrderContent,
+  IPaymentInfo,
+  IProduct,
+} from "../interface/IModel";
 import { resources } from "../resources/resources";
 import { ValidateOrderInfo } from "../services/Validation";
 import { v4 as uuid } from "uuid";
-import { AddOrderThunk, NewOrderThunk } from "../functions/order";
+import {
+  AddOrderThunk,
+  NewOrderThunk,
+  OrderUpdateThunk,
+} from "../functions/order";
 import Draggable from "react-draggable";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -35,9 +50,15 @@ import {
 import { GenerateOTP } from "../services/OTPGenerator";
 import { request_styles } from "../pages/home/style";
 import Input from "./Input";
-
+import { OrderContent } from "../pages/home/components";
+import { currency } from "../constants/constants";
+import {
+  GetAmountDue,
+  GetPaymentAmount,
+  ValidateOrderContent,
+} from "../pages/home/services/services";
 interface IProps {
-  info: IOrder;
+  Info: IOrder;
   handleModal: () => void;
 }
 
@@ -59,14 +80,69 @@ const style = makeStyles(
   }),
   { index: 1 }
 );
-export default function ManageRequest({ handleModal, info }: IProps) {
+export default function ManageRequest({ handleModal, Info }: IProps) {
   const classes = request_styles();
+  const dispatch = useAppDispatch();
   const styles = style();
-  const [order, setOrder] = React.useState<IOrder>(info);
-  const [payment, setPayment] = React.useState<number>(0);
+  const [open, setOpen] = React.useState(false);
+  const [payment, setPayment] = React.useState<any>("");
+  const [info, setInfo] = React.useState<IOrder>(Info);
+  const { products } = useAppSelector((state) => state.ProductsReducer);
+  const [product, setProduct] = React.useState<IProduct>(InitialProductInfo);
+  const [content, setContent] = React.useState<IOrderContent>({
+    ...InitialOrderContentInfo,
+    id: GenerateOTP(),
+  });
+
+  function HandleUpdate() {
+    dispatch(OrderUpdateThunk({ id: info._id, info }));
+  }
+
+  function handleAddPayment() {
+    if (isNaN(parseFloat(payment))) {
+      dispatch(ResponseFail("Invalid Amount"));
+    } else {
+      setInfo({
+        ...info,
+        payment: [
+          ...info.payment,
+          {
+            date: moment().format(),
+            amount: parseFloat(payment),
+            id: GenerateOTP(),
+          },
+        ],
+      });
+      setPayment("");
+    }
+  }
+
+  function handleAddContent() {
+    try {
+      ValidateOrderContent(content);
+      setInfo({
+        ...info,
+        order: {
+          ...info.order,
+          content: [...info.order.content, content],
+        },
+      });
+      setContent({ ...InitialOrderContentInfo, id: GenerateOTP() });
+    } catch (error) {
+      dispatch(ResponseFail(error));
+    }
+  }
   return (
     <Modal className={styles.root} open={Boolean(info)}>
       <React.Fragment>
+        <OrderContent
+          open={open}
+          handleOpen={() => setOpen(false)}
+          content={info.order.content}
+          setContent={(data) =>
+            setInfo({ ...info, order: { ...info.order, content: data } })
+          }
+        />
         <IconButton
           onClick={handleModal}
           color="secondary"
@@ -83,7 +159,11 @@ export default function ManageRequest({ handleModal, info }: IProps) {
           <Close htmlColor="firebrick" />
         </IconButton>
         <Draggable>
-          <Paper elevation={2} className={classes.paper_container}>
+          <Paper
+            style={{ paddingBottom: 20 }}
+            elevation={2}
+            className={classes.paper_container}
+          >
             <Box className={classes.header}>
               <Box className={classes.logo_container}>
                 <img src={resources.logo} className="img" alt="logo2" />
@@ -93,12 +173,18 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                 style={{ fontSize: 24, color: "#fff" }}
                 variant="caption"
               >
-                Add New Request
+                Update Order Details
               </Typography>
             </Box>
             <Box className={classes.container}>
               <Box className={classes.left_container}>
-                <Box style={{ width: "90%", alignSelf: "center" }}>
+                <Box
+                  style={{
+                    width: "90%",
+                    alignSelf: "center",
+                    padding: "8px 0",
+                  }}
+                >
                   <Typography
                     variant="caption"
                     className={`title ${classes.title_label}`}
@@ -108,38 +194,38 @@ export default function ManageRequest({ handleModal, info }: IProps) {
 
                   <Input
                     label="Name"
-                    value={order.customer.name}
+                    value={info.customer.name}
                     handleChange={(e) =>
-                      setOrder({
-                        ...order,
-                        customer: { ...order.customer, name: e.target.value },
+                      setInfo({
+                        ...info,
+                        customer: { ...info.customer, name: e.target.value },
                       })
                     }
                   />
                   <Input
                     label="PhoneNumber"
-                    value={order.customer.phone}
+                    value={info.customer.phone}
                     handleChange={(e) =>
-                      setOrder({
-                        ...order,
-                        customer: { ...order.customer, phone: e.target.value },
+                      setInfo({
+                        ...info,
+                        customer: { ...info.customer, phone: e.target.value },
                       })
                     }
                   />
                   <Input
                     label="Email"
-                    value={order.customer.email}
+                    value={info.customer.email}
                     type="email"
                     handleChange={(e) =>
-                      setOrder({
-                        ...order,
-                        customer: { ...order.customer, email: e.target.value },
+                      setInfo({
+                        ...info,
+                        customer: { ...info.customer, email: e.target.value },
                       })
                     }
                   />
                 </Box>
               </Box>
-              <Box className={classes.right_container}>
+              <Box style={{ width: "90%" }} className={classes.right_container}>
                 <Box
                   style={{
                     width: "90%",
@@ -147,7 +233,7 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    marginBottom: 1,
+                    marginBottom: 2,
                   }}
                 >
                   <Typography
@@ -161,6 +247,7 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     variant="text"
                     size="small"
                     color="primary"
+                    onClick={() => setOpen(true)}
                   >
                     <RemoveRedEye />
                     <Typography variant="body2">View</Typography>
@@ -172,7 +259,52 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    width: "90%",
                     marginBottom: 10,
+                  }}
+                >
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    label="Product"
+                    style={{ flex: 1 }}
+                    value={content.title}
+                    select
+                    onChange={(e) =>
+                      setContent({ ...content, title: e.target.value })
+                    }
+                  >
+                    {products.map((p) => (
+                      <MenuItem
+                        value={p.name}
+                        button
+                        onClick={() => {
+                          setProduct(p);
+                          setContent({
+                            ...content,
+                            title: p.name,
+                            id: p._id,
+                            unit_cost: p.unit_cost,
+                          });
+                        }}
+                        key={p._id}
+                      >
+                        {p.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 10,
+                    alignSelf: "center",
+                    width: "90%",
+                    overflow: "hidden",
+                    padding: "8px 0",
                   }}
                 >
                   <TextField
@@ -180,34 +312,29 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     size="small"
                     label="Unit Cost"
                     style={{ marginRight: 5, flex: 1 }}
+                    value={product.unit_cost === 0 ? "" : product.unit_cost}
                   />
                   <TextField
                     variant="outlined"
                     size="small"
                     label="Quantity"
                     style={{ flex: 1 }}
-                  />
-                </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    marginBottom: 10,
-                  }}
-                >
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    label="Title"
-                    style={{ flex: 1 }}
+                    value={content.quantity === 0 ? "" : content.quantity}
+                    onChange={(e) => {
+                      if (!isNaN(parseInt(e.target.value))) {
+                        setContent({
+                          ...content,
+                          quantity: parseInt(e.target.value),
+                        });
+                      } else {
+                        setContent({ ...content, quantity: 0 });
+                      }
+                    }}
                   />
                   <Button
                     style={{
                       flex: 0.35,
-                      marginLeft: 5,
+                      marginLeft: 10,
                       textTransform: "none",
                       height: 35,
                       marginTop: 1,
@@ -215,6 +342,7 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     variant="outlined"
                     size="small"
                     color="primary"
+                    onClick={handleAddContent}
                   >
                     Add
                   </Button>
@@ -223,11 +351,11 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Estimated Delivery Date"
-                    value={order.delivery.date}
+                    value={info.delivery.date}
                     onChange={(newValue) => {
-                      setOrder({
-                        ...order,
-                        delivery: { ...order.delivery, date: newValue },
+                      setInfo({
+                        ...info,
+                        delivery: { ...info.delivery, date: newValue },
                       });
                     }}
                     renderInput={(params) => (
@@ -236,7 +364,7 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                         variant="outlined"
                         {...params}
                         className={classes.input}
-                        style={{ width: "100%" }}
+                        style={{ width: "90%" }}
                       />
                     )}
                   />
@@ -244,7 +372,7 @@ export default function ManageRequest({ handleModal, info }: IProps) {
               </Box>
             </Box>
             <Divider />
-            <Box className={classes.container}>
+            <Box style={{}} className={classes.container}>
               <Box className={classes.left_container}>
                 <Box style={{ width: "90%", alignSelf: "center" }}>
                   <Typography
@@ -253,26 +381,61 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                   >
                     Payment
                   </Typography>
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    label="Amount"
-                    type="number"
-                    style={{ width: "100%", margin: "5px 0" }}
-                  />
                   <Box
                     style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      margin: "5px 0",
+                    }}
+                  >
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      label="Amount"
+                      value={payment}
+                      onChange={(e) => {
+                        if (!isNaN(parseFloat(e.target.value))) {
+                          setPayment(parseFloat(e.target.value));
+                        }
+                      }}
+                      style={{ flex: 1, marginRight: 5 }}
+                    />
+                    <Button
+                      variant="outlined"
+                      style={{ textTransform: "none" }}
+                      size="small"
+                      color="primary"
+                      onClick={handleAddPayment}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                  <Box
+                    style={{
+                      width: "100%",
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "flex-start",
-                      margin: "5px 0",
+                      padding: 4,
                     }}
                   >
-                    <Typography variant="body2">Completed</Typography>
-                    <Checkbox checked={false} />
-                    <Typography variant="body2">Partial</Typography>
-                    <Checkbox checked={true} />
+                    <Typography variant="body2">Delivered</Typography>
+                    <Checkbox
+                      onClick={() =>
+                        setInfo({
+                          ...info,
+                          delivery: {
+                            ...info.delivery,
+                            delivered: !info.delivery.delivered,
+                          },
+                        })
+                      }
+                      checked={info.delivery.delivered}
+                    />
                   </Box>
                 </Box>
               </Box>
@@ -288,61 +451,79 @@ export default function ManageRequest({ handleModal, info }: IProps) {
                     variant="outlined"
                     size="small"
                     label="Address"
-                    style={{ width: "100%", margin: "5px 0" }}
+                    value={info.delivery.address}
+                    style={{ width: "100%", margin: "10px 0" }}
                   />
                   <TextField
                     variant="outlined"
+                    value={info.delivery.note}
                     size="small"
                     label="Statement/Note"
-                    style={{ width: "100%", margin: "5px 0" }}
+                    style={{ width: "100%", margin: "10px 0" }}
                   />
                 </Box>
               </Box>
             </Box>
             <Divider />
-            <Box className={classes.container}>
-              <Box className={classes.left_container}>
-                <Box
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    padding: 4,
-                  }}
-                >
-                  <Typography variant="body2">Delivered Upon Order</Typography>
-                  <Checkbox />
-                </Box>
-              </Box>
+            <Box
+              style={{
+                padding: "0px 15px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+              className={classes.container}
+            >
               <Box
-                style={{ justifyContent: "flex-end" }}
-                className={classes.right_container}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  padding: 5,
+                }}
               >
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                  }}
+                <Typography variant="body2" style={{ marginRight: 5 }}>
+                  Paid:
+                </Typography>
+                <Typography
+                  variant="body1"
+                  style={{ fontWeight: "bold", color: "seagreen" }}
                 >
-                  <Button
-                    style={{
-                      height: 30,
-                      alignSelf: "flex-end",
-                      textTransform: "none",
-                    }}
-                    variant="contained"
-                    size="small"
-                    color="primary"
-                  >
-                    Save Details
-                  </Button>
-                </Box>
+                  {`${currency}${GetPaymentAmount(info.payment)}`}
+                </Typography>
+                <Typography
+                  style={{ marginLeft: 15, marginRight: 5 }}
+                  variant="body2"
+                >
+                  OutStanding:
+                </Typography>
+                <Typography
+                  style={{ fontWeight: "bold", color: "firebrick" }}
+                  variant="body1"
+                >
+                  {" "}
+                  {`${currency}${
+                    GetAmountDue(info.order.content) -
+                    GetPaymentAmount(info.payment)
+                  }`}
+                </Typography>
               </Box>
+
+              <Button
+                onClick={HandleUpdate}
+                style={{
+                  height: 30,
+                  alignSelf: "flex-end",
+                  textTransform: "none",
+                }}
+                variant="contained"
+                size="small"
+                color="primary"
+              >
+                Update Details
+              </Button>
             </Box>
           </Paper>
         </Draggable>

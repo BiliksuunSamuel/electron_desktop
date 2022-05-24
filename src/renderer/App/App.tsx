@@ -1,6 +1,5 @@
 import * as React from "react";
 import Router from "./router/Router";
-import "../index.css";
 import { InvoiceGenerator, Loader } from "./components";
 import { useAppDispatch, useAppSelector } from "./app/hook";
 import { ToastContainer, toast } from "react-toastify";

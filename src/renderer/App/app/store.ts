@@ -20,6 +20,7 @@ const persistConfig = {
     "UserReducer",
     "SettingsReducer",
     "CompanyInfoReducer",
+    "ProductsReducer",
   ],
 };
 

@@ -1,5 +1,6 @@
 import { Menu, MenuItem, Switch } from "@material-ui/core";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { SetNetworkState } from "../features/slice/SettingsSlice";
 import { Logout } from "../features/slice/UserSlice";
@@ -15,6 +16,7 @@ export default function AccountMenu({
   anchorEl,
 }: IAccountMenu) {
   const dispatch = useAppDispatch();
+  const navigation = useNavigate();
   const { online } = useAppSelector((state) => state.SettingsReducer);
   return (
     <Menu
@@ -26,7 +28,14 @@ export default function AccountMenu({
         "aria-labelledby": "basic-button",
       }}
     >
-      <MenuItem onClick={handleClose}>Profile</MenuItem>
+      <MenuItem
+        onClick={() => {
+          navigation("/home/profile");
+          handleClose();
+        }}
+      >
+        Profile
+      </MenuItem>
       <MenuItem
         onClick={() => {
           handleClose();

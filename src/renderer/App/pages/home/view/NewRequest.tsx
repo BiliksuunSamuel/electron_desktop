@@ -4,6 +4,7 @@ import {
   Checkbox,
   Divider,
   IconButton,
+  MenuItem,
   Paper,
   Slide,
   TextField,
@@ -12,13 +13,18 @@ import {
 import moment = require("moment");
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hook";
-import { InitialOrderContentInfo, NewOrderInfo } from "../../../data/ModelData";
+import {
+  InitialOrderContentInfo,
+  InitialProductInfo,
+  NewOrderInfo,
+} from "../../../data/ModelData";
 import { ResponseFail } from "../../../features/slice/ResponseSlice";
 import {
   INewOrder,
   IOrder,
   IOrderContent,
   IPaymentInfo,
+  IProduct,
 } from "../../../interface/IModel";
 import { resources } from "../../../resources/resources";
 import { ValidateOrderInfo } from "../../../services/Validation";
@@ -34,7 +40,13 @@ import { OrderContent } from "../components";
 import { Input, InvoiceGenerator, StickyNote } from "../../../components";
 import { GenerateOTP } from "../../../services/OTPGenerator";
 import { RemoveRedEye } from "@mui/icons-material";
-import { CheckPaymentStatus, ValidateOrderContent } from "../services/services";
+import {
+  CheckPaymentStatus,
+  GetAmountDue,
+  GetPaymentAmount,
+  ValidateOrderContent,
+} from "../services/services";
+import { currency } from "../../../constants/constants";
 export default function NewRequest() {
   const classes = request_styles();
   const dispatch = useAppDispatch();
@@ -42,9 +54,12 @@ export default function NewRequest() {
   const { orders } = useAppSelector((state) => state.OrdersReducer);
   const { online } = useAppSelector((state) => state.SettingsReducer);
   const { user } = useAppSelector((state) => state.UserReducer);
-  const [content, setContent] = React.useState<IOrderContent>(
-    InitialOrderContentInfo
-  );
+  const { products } = useAppSelector((state) => state.ProductsReducer);
+  const [product, setProduct] = React.useState<IProduct>(InitialProductInfo);
+  const [content, setContent] = React.useState<IOrderContent>({
+    ...InitialOrderContentInfo,
+    id: GenerateOTP(),
+  });
   const [value, setValue] = React.useState<Date | null>(null);
   const [order, setOrder] = React.useState<INewOrder>({
     ...NewOrderInfo,
@@ -91,18 +106,16 @@ export default function NewRequest() {
           content: [...order.order.content, content],
         },
       });
-      setContent(InitialOrderContentInfo);
+      setContent({
+        ...InitialOrderContentInfo,
+        id: GenerateOTP(),
+      });
     } catch (error) {
       dispatch(ResponseFail(error));
     }
   }
   return (
     <Box className={classes.root}>
-      {/* <StickyNote
-        handleNotes={(data) => setOrder({ ...order, notes: data })}
-        notes={order.notes}
-        note={{ id: "", text: "" }}
-      /> */}
       <OrderContent
         open={open}
         handleOpen={() => setOpen(false)}
@@ -209,6 +222,44 @@ export default function NewRequest() {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    width: "100%",
+                    marginBottom: 10,
+                  }}
+                >
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    select
+                    value={content.title}
+                    label="Product"
+                    style={{ flex: 1 }}
+                  >
+                    {products.map((p) => (
+                      <MenuItem
+                        value={p.name}
+                        button
+                        onClick={() => {
+                          setProduct(p);
+                          setContent({
+                            ...content,
+                            title: p.name,
+                            id: p._id,
+                            unit_cost: p.unit_cost,
+                          });
+                        }}
+                        key={p._id}
+                      >
+                        {p.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: 10,
                   }}
                 >
@@ -217,53 +268,30 @@ export default function NewRequest() {
                     size="small"
                     label="Unit Cost"
                     style={{ marginRight: 5, flex: 1 }}
-                    onChange={(e) =>
-                      setContent({
-                        ...content,
-                        unit_cost: parseFloat(e.target.value),
-                      })
-                    }
-                    value={content.unit_cost}
+                    value={product.unit_cost === 0 ? "" : product.unit_cost}
                   />
                   <TextField
                     variant="outlined"
                     size="small"
                     label="Quantity"
                     style={{ flex: 1 }}
-                    value={content.quantity}
-                    onChange={(e) =>
-                      setContent({
-                        ...content,
-                        quantity: parseInt(e.target.value),
-                      })
-                    }
-                  />
-                </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    marginBottom: 10,
-                  }}
-                >
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    value={content.title}
-                    onChange={(e) =>
-                      setContent({ ...content, title: e.target.value })
-                    }
-                    label="Title"
-                    style={{ flex: 1 }}
+                    value={content.quantity === 0 ? "" : content.quantity}
+                    onChange={(e) => {
+                      if (!isNaN(parseInt(e.target.value))) {
+                        setContent({
+                          ...content,
+                          quantity: parseInt(e.target.value),
+                        });
+                      } else {
+                        setContent({ ...content, quantity: 0 });
+                      }
+                    }}
                   />
                   <Button
                     onClick={HandleAddContent}
                     style={{
                       flex: 0.35,
-                      marginLeft: 5,
+                      marginLeft: 10,
                       textTransform: "none",
                       height: 35,
                       marginTop: 1,
@@ -279,7 +307,11 @@ export default function NewRequest() {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Estimated Delivery Date"
-                    value={order.delivery.date}
+                    value={
+                      order.delivery.delivered
+                        ? order.delivery.date
+                        : moment(Date.now().toString()).format("DD/MM/YYYY")
+                    }
                     onChange={(newValue) => {
                       setOrder({
                         ...order,
@@ -314,27 +346,39 @@ export default function NewRequest() {
                     size="small"
                     label="Amount"
                     type="number"
-                    value={payment}
+                    value={payment === 0 ? "" : payment}
                     onChange={(e) => {
                       if (!isNaN(parseFloat(e.target.value))) {
                         setPayment(parseFloat(e.target.value));
+                      } else {
+                        setPayment(0);
                       }
                     }}
                     style={{ width: "100%", margin: "5px 0" }}
                   />
                   <Box
                     style={{
+                      width: "100%",
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "flex-start",
-                      margin: "5px 0",
+                      padding: 4,
                     }}
                   >
-                    <Typography variant="body2">Completed</Typography>
-                    <Checkbox checked={false} />
-                    <Typography variant="body2">Partial</Typography>
-                    <Checkbox checked={true} />
+                    <Typography variant="body2">Delivered</Typography>
+                    <Checkbox
+                      checked={order.delivery.delivered}
+                      onClick={() =>
+                        setOrder({
+                          ...order,
+                          delivery: {
+                            ...order.delivery,
+                            delivered: !order.delivery.delivered,
+                          },
+                        })
+                      }
+                    />
                   </Box>
                 </Box>
               </Box>
@@ -379,50 +423,65 @@ export default function NewRequest() {
               </Box>
             </Box>
             <Divider />
-            <Box className={classes.container}>
-              <Box className={classes.left_container}>
-                <Box
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    padding: 4,
-                  }}
-                >
-                  <Typography variant="body2">Delivered Upon Order</Typography>
-                  <Checkbox />
-                </Box>
-              </Box>
+            <Box
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                padding: 5,
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+              className={classes.container}
+            >
               <Box
-                style={{ justifyContent: "flex-end" }}
-                className={classes.right_container}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  padding: 5,
+                }}
               >
-                <Box
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                  }}
+                <Typography variant="body2" style={{ marginRight: 5 }}>
+                  Paid:
+                </Typography>
+                <Typography
+                  variant="body1"
+                  style={{ fontWeight: "bold", color: "seagreen" }}
                 >
-                  <Button
-                    onClick={HandleAdd}
-                    style={{
-                      height: 30,
-                      alignSelf: "flex-end",
-                      textTransform: "none",
-                    }}
-                    variant="contained"
-                    size="small"
-                    color="primary"
-                  >
-                    Save Details
-                  </Button>
-                </Box>
+                  {`${currency}${GetPaymentAmount(order.payment)}`}
+                </Typography>
+                <Typography
+                  style={{ marginLeft: 15, marginRight: 5 }}
+                  variant="body2"
+                >
+                  OutStanding:
+                </Typography>
+                <Typography
+                  style={{ fontWeight: "bold", color: "firebrick" }}
+                  variant="body1"
+                >
+                  {" "}
+                  {`${currency}${
+                    GetAmountDue(order.order.content) -
+                    GetPaymentAmount(order.payment)
+                  }`}
+                </Typography>
               </Box>
+
+              <Button
+                onClick={HandleAdd}
+                style={{
+                  height: 30,
+                  alignSelf: "flex-end",
+                  textTransform: "none",
+                }}
+                variant="contained"
+                size="small"
+                color="primary"
+              >
+                Save Details
+              </Button>
             </Box>
           </Paper>
         </Draggable>

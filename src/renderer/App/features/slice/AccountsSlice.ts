@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AccountsReducer } from "../../data/ReducerState";
-import { GetAccountsThunk } from "../../functions/accounts";
+import { GetAccountsThunk, UpdateInfoThunk } from "../../functions/accounts";
 
 export default createSlice({
   name: "AccountsSlice",

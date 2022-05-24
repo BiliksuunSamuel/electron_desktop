@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Box,
   Container,
+  Divider,
   IconButton,
   Paper,
   Typography,
@@ -37,13 +38,129 @@ export default function AboutPage() {
           <Box className={classes.image_container}>
             <img src={resources.house} className="img" />
           </Box>
-          <Typography variant="body1" style={{ fontSize: 16, margin: "5px 0" }}>
-            {company.name}
-          </Typography>
-          <Typography variant="body2">{company.tel}</Typography>
-          <Typography variant="body2">{company.email}</Typography>
-          <Typography variant="body2">{company.address}</Typography>
-          <Typography variant="body2">{company.motto}</Typography>
+          <Divider />
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 5,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="body2"
+              style={{ marginRight: 5, textAlign: "left" }}
+            >
+              Name:
+            </Typography>
+            <Typography
+              variant="body1"
+              style={{ fontSize: 16, flex: 1, textAlign: "right" }}
+            >
+              {company.name}
+            </Typography>
+          </Box>
+          <Divider />
+
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 5,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="body2"
+              style={{ marginRight: 5, textAlign: "left" }}
+            >
+              Phone:
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{ fontSize: 16, flex: 1, textAlign: "right" }}
+            >
+              {company.tel}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 5,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="body2"
+              style={{ marginRight: 5, textAlign: "left" }}
+            >
+              Email:
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{ fontSize: 16, flex: 1, textAlign: "right" }}
+            >
+              {company.email}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 5,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="body2"
+              style={{ marginRight: 5, textAlign: "left" }}
+            >
+              Address:
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{ fontSize: 16, flex: 1, textAlign: "right" }}
+            >
+              {company.address}
+            </Typography>
+          </Box>
+          <Divider />
+
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 5,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="body2"
+              style={{ marginRight: 5, textAlign: "left" }}
+            >
+              Motto:
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{ fontSize: 16, flex: 1, textAlign: "right" }}
+            >
+              {company.motto}
+            </Typography>
+          </Box>
+          <Divider />
         </Paper>
       </Box>
     </Container>

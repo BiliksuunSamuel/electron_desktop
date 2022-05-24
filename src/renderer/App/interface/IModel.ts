@@ -82,3 +82,9 @@ export interface ICompanyInfo {
   email: string;
   motto: string;
 }
+
+export interface IProduct {
+  name: string;
+  _id: string;
+  unit_cost: number;
+}

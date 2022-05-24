@@ -58,6 +58,7 @@ export default function SideBar({ toggleSidebar, open }: ISidebar) {
                 style={{
                   backgroundColor:
                     location.pathname === menu.route ? "#fff" : "transparent",
+                  color: location.pathname === menu.route ? "#000" : "#f5f5f5",
                 }}
                 key={menu.title}
                 className={classes.listitem}
@@ -65,8 +66,15 @@ export default function SideBar({ toggleSidebar, open }: ISidebar) {
                 button
                 onClick={() => navigation(menu.route)}
               >
-                <ListItemIcon>{menu.icon}</ListItemIcon>
-                <ListItemText primary={menu.title} />
+                <ListItemIcon
+                  style={{
+                    color:
+                      location.pathname === menu.route ? "gray" : "#f5f5f5",
+                  }}
+                >
+                  {menu.icon}
+                </ListItemIcon>
+                <ListItemText style={{ fontSize: 14 }} primary={menu.title} />
               </ListItem>
             ))}
           </List>

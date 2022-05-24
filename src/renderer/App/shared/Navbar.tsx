@@ -23,6 +23,7 @@ interface IAppbar {
 }
 export default function Navbar({ open, toggleSidebar, handleBackup }: IAppbar) {
   const classes = appbar_styles();
+  const { user } = useAppSelector((state) => state.UserReducer);
   const { online } = useAppSelector((state) => state.SettingsReducer);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -75,6 +76,9 @@ export default function Navbar({ open, toggleSidebar, handleBackup }: IAppbar) {
               />
             </IconButton>
           )}
+          <Typography variant="body1" style={{ margin: "0px 10px" }}>
+            {user && user.username}
+          </Typography>
           <IconButton
             style={{ marginLeft: 10 }}
             onClick={handleClick}

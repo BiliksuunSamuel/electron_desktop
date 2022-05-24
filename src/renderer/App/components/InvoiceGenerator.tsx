@@ -26,12 +26,12 @@ import ReactToPrint, { useReactToPrint } from "react-to-print";
 import { Close, LocationCity, Phone, Print } from "@material-ui/icons";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { SetOrder } from "../features/slice/SettingsSlice";
-import { currency } from "../constants/constants";
+import { currency, typefacefont } from "../constants/constants";
 import {
   GetAmountDue,
   GetPaymentAmount,
 } from "../pages/home/services/services";
-
+import ReactToPrintComponent from "react-print-components";
 //
 const styles = makeStyles(
   (theme) => ({
@@ -88,13 +88,13 @@ const styles = makeStyles(
       overflow: "hidden",
     },
     company_title: {
-      fontFamily: "compagnon light",
+      fontFamily: "American Typewriter Std-Med",
       fontSize: 17,
       color: colors._000,
       margin: theme.spacing(0, 1),
     },
     tag: {
-      fontFamily: "verteran",
+      fontFamily: "American Typewriter Std-Med",
       fontSize: 20,
       fontWeight: "bold",
       color: colors._000,
@@ -113,6 +113,14 @@ const styles = makeStyles(
     },
     top_container_right: {
       flex: 1,
+    },
+    comp: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      height: "100%",
     },
   }),
   { index: 1 }
@@ -179,7 +187,10 @@ export default function InvoiceGenerator() {
                     <img src={resources.logo} className="img" />
                   </Box>
                   <Typography
-                    style={{ fontFamily: "compagnon light", fontSize: 16 }}
+                    style={{
+                      fontFamily: typefacefont,
+                      fontSize: 16,
+                    }}
                     variant="body1"
                     className={classes.company_title}
                   >
@@ -192,7 +203,7 @@ export default function InvoiceGenerator() {
                   </Typography>
                 </Box>
               </Box>
-              <Divider />
+              <hr />
               <Box style={{ marginBottom: 15 }}>
                 <Box
                   style={{
@@ -203,7 +214,7 @@ export default function InvoiceGenerator() {
                 >
                   <Typography
                     style={{
-                      fontFamily: "compagnon light",
+                      fontFamily: typefacefont,
                       fontWeight: "normal",
                       fontSize: 14,
                     }}
@@ -214,7 +225,7 @@ export default function InvoiceGenerator() {
                     Name: {order.customer.name}
                   </Typography>
                   <Typography
-                    style={{ fontFamily: "compagnon light" }}
+                    style={{ fontFamily: typefacefont }}
                     component="p"
                     className="invoice"
                     variant="caption"
@@ -225,7 +236,7 @@ export default function InvoiceGenerator() {
                       : "N/A"}
                   </Typography>
                   <Typography
-                    style={{ fontFamily: "compagnon light" }}
+                    style={{ fontFamily: typefacefont }}
                     component="p"
                     className="invoice"
                     variant="caption"
@@ -233,7 +244,7 @@ export default function InvoiceGenerator() {
                     Tel: {order.customer.phone}
                   </Typography>
                   <Typography
-                    style={{ fontFamily: "compagnon light" }}
+                    style={{ fontFamily: typefacefont }}
                     component="p"
                     className="invoice"
                     variant="caption"
@@ -245,7 +256,7 @@ export default function InvoiceGenerator() {
                   </Typography>
                 </Box>
               </Box>
-              <Divider />
+              <hr />
               <Box style={{ marginBottom: 15 }}>
                 <Box
                   style={{
@@ -255,7 +266,7 @@ export default function InvoiceGenerator() {
                 >
                   <Typography
                     style={{
-                      fontFamily: "compagnon light",
+                      fontFamily: typefacefont,
                       fontWeight: "normal",
                       fontSize: 12,
                     }}
@@ -265,6 +276,7 @@ export default function InvoiceGenerator() {
                     Content Info:
                   </Typography>
                 </Box>
+                <hr />
                 <Box style={{ paddingLeft: 7, marginTop: 5 }}>
                   <TableContainer component={Box}>
                     <Table>
@@ -273,7 +285,7 @@ export default function InvoiceGenerator() {
                           <TableCell
                             className={global.grid_cell}
                             style={{
-                              fontFamily: "compagnon light",
+                              fontFamily: typefacefont,
                               fontSize: 12,
                               height: 20,
                             }}
@@ -284,7 +296,7 @@ export default function InvoiceGenerator() {
                             className={global.grid_cell}
                             align="center"
                             style={{
-                              fontFamily: "compagnon light",
+                              fontFamily: typefacefont,
                               fontSize: 12,
                               height: 20,
                             }}
@@ -295,7 +307,7 @@ export default function InvoiceGenerator() {
                             className={global.grid_cell}
                             align="center"
                             style={{
-                              fontFamily: "compagnon light",
+                              fontFamily: typefacefont,
                               fontSize: 12,
                               height: 20,
                             }}
@@ -313,7 +325,7 @@ export default function InvoiceGenerator() {
                             <TableCell
                               style={{
                                 height: 20,
-                                fontFamily: "compagnon light",
+                                fontFamily: typefacefont,
                                 fontSize: 12,
                               }}
                               className={global.grid_cell}
@@ -323,7 +335,7 @@ export default function InvoiceGenerator() {
                             <TableCell
                               style={{
                                 height: 20,
-                                fontFamily: "compagnon light",
+                                fontFamily: typefacefont,
                                 fontSize: 12,
                               }}
                               className={global.grid_cell}
@@ -334,7 +346,7 @@ export default function InvoiceGenerator() {
                             <TableCell
                               style={{
                                 height: 20,
-                                fontFamily: "compagnon light",
+                                fontFamily: typefacefont,
                                 fontSize: 12,
                               }}
                               className={global.grid_cell}
@@ -362,7 +374,7 @@ export default function InvoiceGenerator() {
                 >
                   <Typography
                     style={{
-                      fontFamily: "compagnon light",
+                      fontFamily: typefacefont,
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -372,7 +384,7 @@ export default function InvoiceGenerator() {
                   </Typography>
                   <Typography
                     style={{
-                      fontFamily: "compagnon light",
+                      fontFamily: typefacefont,
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -384,7 +396,7 @@ export default function InvoiceGenerator() {
                 </Box>
               </Box>
 
-              <Divider />
+              <hr />
               <Box style={{ marginBottom: 15 }}>
                 <Box
                   style={{
@@ -394,7 +406,10 @@ export default function InvoiceGenerator() {
                   }}
                 >
                   <Typography
-                    style={{ fontFamily: "compagnon light", fontSize: 12 }}
+                    style={{
+                      fontFamily: typefacefont,
+                      fontSize: 12,
+                    }}
                     component="p"
                     variant="caption"
                   >
@@ -406,7 +421,7 @@ export default function InvoiceGenerator() {
                     style={{
                       width: "100%",
                       textAlign: "left",
-                      fontFamily: "compagnon light",
+                      fontFamily: typefacefont,
                       fontSize: 12,
                     }}
                     variant="caption"
@@ -415,7 +430,7 @@ export default function InvoiceGenerator() {
                   </Typography>
                 </Box>
               </Box>
-              <Divider style={{ marginTop: 20 }} />
+              <hr style={{ marginTop: 10 }} />
               <Box
                 style={{
                   width: "100%",
@@ -434,7 +449,10 @@ export default function InvoiceGenerator() {
                 />
                 <Typography
                   variant="body2"
-                  style={{ fontFamily: "compagnon light", fontSize: 12 }}
+                  style={{
+                    fontFamily: typefacefont,
+                    fontSize: 12,
+                  }}
                 >
                   {company.tel}
                 </Typography>
@@ -446,7 +464,10 @@ export default function InvoiceGenerator() {
                 />
                 <Typography
                   variant="body2"
-                  style={{ fontFamily: "compagnon light", fontSize: 12 }}
+                  style={{
+                    fontFamily: typefacefont,
+                    fontSize: 12,
+                  }}
                 >
                   {company.address}
                 </Typography>

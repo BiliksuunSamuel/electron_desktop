@@ -2,6 +2,7 @@ import {
   IAccountsReducer,
   ICompanyInfoReducer,
   IOrderReducer,
+  IProductsReducer,
   IResponseReducer,
   ISettingsReducer,
   IUserReducer,
@@ -27,10 +28,14 @@ export const AccountsReducer: IAccountsReducer = {
 };
 
 export const SettingsReducerState: ISettingsReducer = {
-  online: false,
+  online: true,
   order: null,
 };
 
 export const CompanyInfoReducer: ICompanyInfoReducer = {
   company: CompanyInfo,
+};
+
+export const ProductReducerState: IProductsReducer = {
+  products: [],
 };

@@ -4,6 +4,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hook";
 import { GetAccountsThunk } from "../../../functions/accounts";
 import { GetOrdersThunk } from "../../../functions/order";
+import { GetProductsThunk } from "../../../functions/products";
 import { Navbar, Sidebar } from "../../../shared";
 import BackupOrdersModal from "../components/BackupOrdersModal";
 import { home_styles } from "../style";
@@ -20,6 +21,7 @@ export default function HomePage() {
     navigation("/home/request/new");
     if (online) {
       dispatch(GetOrdersThunk());
+      dispatch(GetProductsThunk());
     }
     dispatch(GetAccountsThunk());
   }, []);

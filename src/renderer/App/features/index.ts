@@ -4,3 +4,4 @@ export { default as AccountsReducer } from "./slice/AccountsSlice";
 export { default as OrdersReducer } from "./slice/OrdersSlice";
 export { default as SettingsReducer } from "./slice/SettingsSlice";
 export { default as CompanyInfoReducer } from "./slice/CompanySlice";
+export { default as ProductsReducer } from "./slice/ProductsSlice";

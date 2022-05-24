@@ -33,9 +33,9 @@ export default function AccountsPage() {
   }, []);
   return (
     <Container className={classes.root}>
-      {user && (
+      {info && (
         <AccountReview
-          user={user}
+          user={info}
           handleClose={() => setInfo(null)}
           open={Boolean(info)}
         />

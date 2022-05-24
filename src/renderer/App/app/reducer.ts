@@ -6,6 +6,7 @@ import {
   AccountsReducer,
   SettingsReducer,
   CompanyInfoReducer,
+  ProductsReducer,
 } from "../features";
 export default combineReducers({
   ResponseReducer,
@@ -14,4 +15,5 @@ export default combineReducers({
   AccountsReducer,
   SettingsReducer,
   CompanyInfoReducer,
+  ProductsReducer,
 });
