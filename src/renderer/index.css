@@ -1,6 +1,9 @@
 @font-face {
-  font-family: "American Typewriter";
-  src: "./americanttf.ttf" format("truetype");
+  /* font-family: "American Typewriter"; */
+  font-family: "rogers font";
+  src: "./roger.ttf" format("truetype");
+  font-family: "galeries";
+  src: "./galeries.ttf" format("truetype");
 }
 * {
   padding: 0;
