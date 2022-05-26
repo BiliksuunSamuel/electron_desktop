@@ -11,22 +11,19 @@ import * as moment from "moment";
 import * as React from "react";
 import colors from "../constants/colors";
 import { resources } from "../resources/resources";
-import { v4 as uuid } from "uuid";
-import { GenerateOTP } from "../services/OTPGenerator";
+
 import Draggable from "react-draggable";
-import { global_styles } from "../pages/home/style";
-import { IPaymentInfo } from "../interface/IModel";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
-import { Close, LocationCity, Phone, Print } from "@material-ui/icons";
+import ReactToPrint from "react-to-print";
+import { Close, Print } from "@material-ui/icons";
 import { useAppDispatch, useAppSelector } from "../app/hook";
-import { SetOrder } from "../features/slice/SettingsSlice";
-import { currency, typefacefont } from "../constants/constants";
+import { IOrder } from "../interface/IModel";
 import {
   GetAmountDue,
   GetPaymentAmount,
 } from "../pages/home/services/services";
-import ReactToPrintComponent from "react-print-components";
 import InvoiceReceiptItemTable from "./InvoiceReceiptItemTable";
+import { SetOrder } from "../features/slice/SettingsSlice";
+import { currency } from "../constants/constants";
 import { Table } from "react-bootstrap";
 //
 const styles = makeStyles(
@@ -132,14 +129,17 @@ const styles = makeStyles(
 );
 
 //
-export default function InvoiceGenerator() {
+
+interface IProps {
+  order: IOrder;
+  handleClose: () => void;
+}
+export default function ReceiptGenerator({ order, handleClose }: IProps) {
   const classes = styles();
-  const global = global_styles();
   const dispatch = useAppDispatch();
-  const { company } = useAppSelector((state) => state.CompanyInfoReducer);
-  const { order } = useAppSelector((state) => state.SettingsReducer);
   const contentRef = React.useRef(null);
   const { user } = useAppSelector((state) => state.UserReducer);
+
   return (
     <Modal className={classes.root} open={Boolean(order)}>
       <React.Fragment>
@@ -164,7 +164,7 @@ export default function InvoiceGenerator() {
         />
 
         <IconButton
-          onClick={() => dispatch(SetOrder(null))}
+          onClick={handleClose}
           color="secondary"
           style={{
             position: "absolute",
@@ -223,7 +223,7 @@ export default function InvoiceGenerator() {
                         className={classes.tag}
                         variant="body1"
                       >
-                        Invoice
+                        Receipt
                       </Typography>
                     </Box>
                   </Box>
@@ -237,10 +237,9 @@ export default function InvoiceGenerator() {
                   >
                     <p
                       style={{
-                        height: 25,
                         padding: 0,
                         margin: 0,
-                        fontWeight: 900,
+                        fontWeight: 800,
                       }}
                     >
                       <small style={{ fontWeight: "normal", marginRight: 8 }}>
@@ -250,10 +249,9 @@ export default function InvoiceGenerator() {
                     </p>
                     <p
                       style={{
-                        height: 25,
                         padding: 0,
                         margin: 0,
-                        fontWeight: 900,
+                        fontWeight: 800,
                       }}
                     >
                       <small style={{ fontWeight: "normal", marginRight: 8 }}>
@@ -265,6 +263,32 @@ export default function InvoiceGenerator() {
                     </p>
                     <p
                       style={{
+                        padding: 0,
+                        margin: 0,
+                        fontWeight: 800,
+                      }}
+                    >
+                      <small style={{ fontWeight: "normal", marginRight: 8 }}>
+                        PhoneNumber:
+                      </small>
+                      {order.customer.phone}
+                    </p>
+                    <p
+                      style={{
+                        padding: 0,
+                        margin: 0,
+                        fontWeight: 800,
+                      }}
+                    >
+                      <small style={{ fontWeight: "normal", marginRight: 8 }}>
+                        Amount Paid:
+                      </small>
+                      {`${currency}${GetPaymentAmount(order.payment).toFixed(
+                        2
+                      )}`}
+                    </p>
+                    <p
+                      style={{
                         height: 25,
                         padding: 0,
                         margin: 0,
@@ -272,9 +296,12 @@ export default function InvoiceGenerator() {
                       }}
                     >
                       <small style={{ fontWeight: "normal", marginRight: 8 }}>
-                        PhoneNumber:
+                        Outstanding:
                       </small>
-                      {order.customer.phone}
+                      {`${currency}${(
+                        GetAmountDue(order.order.content) -
+                        GetPaymentAmount(order.payment)
+                      ).toFixed(2)}`}
                     </p>
                     <p
                       style={{
@@ -307,10 +334,9 @@ export default function InvoiceGenerator() {
                   <Box
                     style={{
                       paddingLeft: 7,
-                      height: 25,
                     }}
                   >
-                    <p style={{ fontWeight: 900, padding: 0, margin: 0 }}>
+                    <p style={{ fontWeight: 800, margin: 0, padding: 0 }}>
                       Order Info:
                     </p>
                   </Box>
@@ -321,7 +347,7 @@ export default function InvoiceGenerator() {
                 </Box>
 
                 <Divider />
-                <Box style={{ marginBottom: 15 }}>
+                <Box style={{ marginBottom: 5 }}>
                   <Box
                     style={{
                       color: colors._000,
@@ -329,7 +355,9 @@ export default function InvoiceGenerator() {
                       paddingRight: 7,
                     }}
                   >
-                    <p style={{ height: 25 }}>Order Statement/Description:</p>
+                    <p style={{ padding: 0, margin: 0 }}>
+                      Order Statement/Description:
+                    </p>
                   </Box>
                 </Box>
               </div>

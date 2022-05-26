@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { duration } from "moment";
 import configuration from "../configuration";
 
 interface IController {
@@ -13,6 +14,10 @@ export default function ({ url, data }: IController) {
         url,
         data,
         method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 300,
       })
         .then((response) => {
           resole(response.data);

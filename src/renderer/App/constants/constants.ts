@@ -1,2 +1,2 @@
 export const currency = "GH₵";
-export const typefacefont = "rogers";
+export const typefacefont = "courier";

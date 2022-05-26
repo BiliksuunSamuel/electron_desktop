@@ -23,7 +23,7 @@ import { FiEdit } from "react-icons/fi";
 import { FaFileInvoice } from "react-icons/fa";
 import { SetOrder } from "../../../features/slice/SettingsSlice";
 import { IOrder } from "../../../interface/IModel";
-import { ManageRequest } from "../../../components";
+import { ManageRequest, ReceiptGenerator } from "../../../components";
 import SearchOrder from "../services/searchOrder";
 export default function OrdersPage() {
   const dispatch = useAppDispatch();
@@ -32,6 +32,7 @@ export default function OrdersPage() {
   const { orders } = useAppSelector((state) => state.OrdersReducer);
   const [Orders, setOrders] = React.useState<IOrder[]>(orders);
   const [order, setOrder] = React.useState<IOrder | null>(null);
+  const [receipt, setReceipt] = React.useState<IOrder | null>(null);
   const classes = orders_styles();
   const [srch, setSrch] = React.useState("");
 
@@ -54,6 +55,12 @@ export default function OrdersPage() {
     <Box component={Container} className={classes.root}>
       {Boolean(order) && (
         <ManageRequest handleModal={() => setOrder(null)} Info={order} />
+      )}
+      {receipt && (
+        <ReceiptGenerator
+          order={receipt}
+          handleClose={() => setReceipt(null)}
+        />
       )}
       <Container className={classes.container}>
         <Box component={Paper} className={classes.header}>
@@ -121,7 +128,10 @@ export default function OrdersPage() {
                         </IconButton>
                       </TableCell>
                       <TableCell className={global.grid_cell} align="center">
-                        <IconButton size="small">
+                        <IconButton
+                          onClick={() => setReceipt(order)}
+                          size="small"
+                        >
                           <Print />
                         </IconButton>
                       </TableCell>
