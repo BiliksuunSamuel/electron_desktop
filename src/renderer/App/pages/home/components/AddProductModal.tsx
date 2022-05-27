@@ -96,8 +96,16 @@ export default function AddProductModal({ open, handleOpen, product }: IProps) {
   const classes = styles();
   const dispatch = useAppDispatch();
   const [info, setInfo] = React.useState<IProduct>(
-    product ? product : InitialProductInfo
+    product
+      ? { name: product.name, unit_cost: product.unit_cost, _id: product._id }
+      : InitialProductInfo
   );
+
+  React.useEffect(() => {
+    if (product) {
+      setInfo(product);
+    }
+  }, [product]);
   const { loading } = useAppSelector((state) => state.ResponseReducer);
   function HandleAddProduct() {
     try {

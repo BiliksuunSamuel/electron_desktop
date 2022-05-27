@@ -8,3 +8,4 @@ export { default as ManageRequest } from "./ManageRequest";
 export { default as AccountReview } from "./AccountReview";
 export { default as InvoiceReceiptItemTable } from "./InvoiceReceiptItemTable";
 export { default as ReceiptGenerator } from "./ReceiptGenerator";
+export { default as ConfirmationModal } from "./ConfirmationModal";

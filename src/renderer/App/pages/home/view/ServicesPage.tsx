@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   MenuItem,
   Paper,
@@ -39,6 +40,14 @@ export default function ServicesPage() {
       <Box className={classes.header}>
         <Typography variant="body1">Service Monitor </Typography>
         <Box className={classes.header_right}>
+          <Button
+            size="small"
+            variant="text"
+            style={{ textTransform: "none", marginRight: 20 }}
+            onClick={() => dispatch(GetOrdersThunk())}
+          >
+            Refresh
+          </Button>
           <TextField
             variant="outlined"
             size="small"

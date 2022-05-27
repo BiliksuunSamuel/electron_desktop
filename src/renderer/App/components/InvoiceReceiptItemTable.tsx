@@ -3,6 +3,7 @@ import { Table } from "react-bootstrap";
 import { currency } from "../constants/constants";
 import { IOrderContent } from "../interface/IModel";
 import { GetAmountDue } from "../pages/home/services/services";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 interface IProps {
   items: IOrderContent[];

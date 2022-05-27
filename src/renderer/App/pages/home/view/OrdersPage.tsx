@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   IconButton,
   Paper,
@@ -74,8 +75,16 @@ export default function OrdersPage() {
             </Typography>
           </Box>
           <Box className={classes.header_right}>
+            <Button
+              size="small"
+              variant="text"
+              onClick={() => dispatch(GetOrdersThunk())}
+              style={{ marginRight: 20, textTransform: "none" }}
+            >
+              Refresh
+            </Button>
             <TextField
-              variant="outlined"
+              variant="filled"
               size="small"
               placeholder="search...."
               value={srch}

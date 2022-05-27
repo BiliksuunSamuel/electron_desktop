@@ -23,9 +23,8 @@ const mainOpts: Electron.BrowserWindowConstructorOptions = {
 };
 const config: SplashScreen.Config = {
   windowOpts: mainOpts,
-  templateUrl: isDev
-    ? path.join(__dirname, "/icons/splash.html")
-    : "./build/splash.html",
+  templateUrl: path.join(__dirname, "/icons/splash.html"),
+
   splashScreenOpts: {
     width: 250,
     height: 250,

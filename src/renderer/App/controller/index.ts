@@ -17,7 +17,7 @@ export default function ({ url, data }: IController) {
         headers: {
           "Content-Type": "application/json",
         },
-        timeout: 300,
+        timeout: 30000,
       })
         .then((response) => {
           resole(response.data);
